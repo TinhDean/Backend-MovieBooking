@@ -88,3 +88,12 @@ export const refreshAccessToken = async (token: string) => {
 
   return { accessToken }
 }
+
+export const changePassword = async (userId: string, { currentPassword, newPassword }: { currentPassword: string; newPassword: string; }) => {
+  const user = await User.findById(userId).select('+password')
+  if (!user) throw new AppError('User not found', 404)
+  const ok = await bcrypt.compare(currentPassword, user.password)
+  if (!ok) throw new AppError('Current password is incorrect', 400)
+  user.password = await bcrypt.hash(newPassword, 10)
+  await user.save()
+}
