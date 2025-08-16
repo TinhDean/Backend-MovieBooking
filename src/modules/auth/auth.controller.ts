@@ -64,5 +64,18 @@ export const logout = async (_: Request, res: Response) => {
     sameSite: 'strict',
   })
 
+  
+
   sendResponse({ res, message: 'Logged out successfully' })
+}
+
+export const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = getUserId(req)
+    const { currentPassword, newPassword } = req.body
+    await authService.changePassword(userId, { currentPassword, newPassword })
+    sendResponse({ res, message: 'Password updated' })
+  } catch (err) {
+    next(err)
+  }
 }
